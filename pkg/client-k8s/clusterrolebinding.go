@@ -137,7 +137,7 @@ func CreateOrUpdateClusterRoleBinding(typeMeta Metav1TypeMeta, objectMeta Metav1
 		resultGet, getErr := GetClusterRoleBinding(objectMeta.Name)
 		if getErr != nil {
 			log.Printf("Error getting cluster role binding: %v \n", err)
-			return err
+			// return err
 		}
 
 		if resultGet != nil {

@@ -134,7 +134,7 @@ func CreateOrUpdateRole(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectMeta, ru
 		resultGet, getErr := GetRole(objectMeta.Name, objectMeta.Namespace)
 		if getErr != nil {
 			log.Printf("Error getting role: %v \n", err)
-			return err
+			// return err
 		}
 
 		if resultGet != nil {

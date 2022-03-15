@@ -128,7 +128,7 @@ func CreateOrUpdateServiceAccount(typeMeta Metav1TypeMeta, objectMeta Metav1Obje
 		resultGet, getErr := GetServiceAccount(objectMeta.Name, objectMeta.Namespace)
 		if getErr != nil {
 			log.Printf("Error getting ServiceAccount: %v \n", err)
-			return err
+			// return err
 		}
 
 		if resultGet != nil {

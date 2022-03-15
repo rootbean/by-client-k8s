@@ -137,7 +137,7 @@ func CreateOrUpdateRoleBinding(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectM
 		resultGet, getErr := GetRoleBinding(objectMeta.Name, objectMeta.Namespace)
 		if getErr != nil {
 			log.Printf("Error getting role binding: %v \n", err)
-			return err
+			// return err
 		}
 
 		if resultGet != nil {

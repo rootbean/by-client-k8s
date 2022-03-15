@@ -176,7 +176,7 @@ func CreateOrUpdatePVC(
 		resultGet, getErr := GetPVC(objectMeta.Name, objectMeta.Namespace)
 		if getErr != nil {
 			log.Printf("Error getting PVC: %v \n", err)
-			return err
+			// return err
 		}
 
 		if resultGet != nil {

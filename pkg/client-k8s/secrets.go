@@ -155,7 +155,7 @@ func CreateOrUpdateSecret(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectMeta, 
 		resultGet, getErr := GetSecret(objectMeta.Name, objectMeta.Namespace)
 		if getErr != nil {
 			log.Printf("Error getting Secret: %v \n", err)
-			return err
+			// return err
 		}
 
 		if resultGet != nil {

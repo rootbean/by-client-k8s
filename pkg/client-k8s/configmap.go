@@ -109,7 +109,7 @@ func CreateOrUpdateConfigMap(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectMet
 		resultGet, getErr := GetConfigMap(objectMeta.Name, objectMeta.Namespace)
 		if getErr != nil {
 			log.Printf("Error getting configMap: %v \n", err)
-			return err
+			// return err
 		}
 
 		if resultGet != nil {
