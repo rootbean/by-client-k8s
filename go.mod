@@ -1,4 +1,4 @@
-module github.com/cuemby/by-client-k8s
+module github.com/rootbean/by-client-k8s
 
 go 1.17
 
