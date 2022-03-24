@@ -113,15 +113,15 @@ func CreateOrUpdateConfigMap(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectMet
 		}
 
 		if resultGet != nil {
-			err := CreateConfigMap(typeMeta, objectMeta, data)
-			if err != nil {
-				log.Printf("Error creating configMap: %v \n", err)
-				return err
-			}
-		} else {
 			err := UpdateConfigMap(resultGet, data)
 			if err != nil {
 				log.Printf("Error updating configMap: %v \n", err)
+				return err
+			}
+		} else {
+			err := CreateConfigMap(typeMeta, objectMeta, data)
+			if err != nil {
+				log.Printf("Error creating configMap: %v \n", err)
 				return err
 			}
 		}

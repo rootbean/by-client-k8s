@@ -138,15 +138,15 @@ func CreateOrUpdateClusterRole(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectM
 		}
 
 		if resultGet != nil {
-			err := CreateClusterRole(typeMeta, objectMeta, rules)
-			if err != nil {
-				log.Printf("Error creating cluster role: %v \n", err)
-				return err
-			}
-		} else {
 			err := UpdateClusterRole(resultGet, rules)
 			if err != nil {
 				log.Printf("Error updating cluster role: %v \n", err)
+				return err
+			}
+		} else {
+			err := CreateClusterRole(typeMeta, objectMeta, rules)
+			if err != nil {
+				log.Printf("Error creating cluster role: %v \n", err)
 				return err
 			}
 		}

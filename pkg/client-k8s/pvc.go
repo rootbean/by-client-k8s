@@ -5,7 +5,6 @@ import (
 	"log"
 
 	corev1 "k8s.io/api/core/v1"
-	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/util/retry"
@@ -59,6 +58,8 @@ func CreatePVC(
 		Spec: pvcSpec,
 	}
 
+	log.Println("error")
+
 	_, err = k8sClientSet.CoreV1().PersistentVolumeClaims(objectMeta.Namespace).Create(context, &pvc, metav1.CreateOptions{})
 
 	if err != nil {
@@ -70,7 +71,7 @@ func CreatePVC(
 
 }
 
-func GetPVC(name, namespace string) (*v1.PersistentVolumeClaim, error) {
+func GetPVC(name, namespace string) (*corev1.PersistentVolumeClaim, error) {
 
 	context := context.Background()
 
@@ -86,7 +87,7 @@ func GetPVC(name, namespace string) (*v1.PersistentVolumeClaim, error) {
 }
 
 func UpdatePVC(
-	objPVC *v1.PersistentVolumeClaim,
+	objPVC *corev1.PersistentVolumeClaim,
 	volumeAccessMode PersistentVolumeAccessMode,
 	storageClassName string,
 	resourceMustParse string,
@@ -118,6 +119,7 @@ func UpdatePVC(
 		StorageClassName: &storageClassName,
 	}
 
+	// Is inmutable - Error
 	objPVC.Spec = pvcSpec
 
 	_, err := k8sClientSet.CoreV1().PersistentVolumeClaims(objPVC.ObjectMeta.Namespace).Update(context, objPVC, metav1.UpdateOptions{})
@@ -131,7 +133,7 @@ func UpdatePVC(
 
 }
 
-func ListPVC(namespace string) (*v1.PersistentVolumeClaimList, error) {
+func ListPVC(namespace string) (*corev1.PersistentVolumeClaimList, error) {
 
 	context := context.Background()
 
@@ -178,17 +180,20 @@ func CreateOrUpdatePVC(
 			log.Printf("Error getting PVC: %v \n", err)
 			// return err
 		}
-
 		if resultGet != nil {
+			/*
+				log.Println("Actualizando PVC")
+				err := UpdatePVC(resultGet, volumeAccessMode, storageClassName, resourceMustParse)
+				if err != nil {
+					log.Printf("Error updating PVC: %v \n", err)
+					return err
+				}
+			*/
+		} else {
+			log.Println("Creando PVC")
 			err := CreatePVC(typeMeta, objectMeta, volumeAccessMode, storageClassName, resourceMustParse)
 			if err != nil {
 				log.Printf("Error creating PVC: %v \n", err)
-				return err
-			}
-		} else {
-			err := UpdatePVC(resultGet, volumeAccessMode, storageClassName, resourceMustParse)
-			if err != nil {
-				log.Printf("Error updating PVC: %v \n", err)
 				return err
 			}
 		}

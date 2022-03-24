@@ -132,15 +132,15 @@ func CreateOrUpdateServiceAccount(typeMeta Metav1TypeMeta, objectMeta Metav1Obje
 		}
 
 		if resultGet != nil {
-			err := CreateServiceAccount(typeMeta, objectMeta, secretsArrStr)
-			if err != nil {
-				log.Printf("Error creating ServiceAccount: %v \n", err)
-				return err
-			}
-		} else {
 			err := UpdateServiceAccount(resultGet, secretsArrStr)
 			if err != nil {
 				log.Printf("Error updating ServiceAccount: %v \n", err)
+				return err
+			}
+		} else {
+			err := CreateServiceAccount(typeMeta, objectMeta, secretsArrStr)
+			if err != nil {
+				log.Printf("Error creating ServiceAccount: %v \n", err)
 				return err
 			}
 		}

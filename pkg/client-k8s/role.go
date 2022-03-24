@@ -138,15 +138,15 @@ func CreateOrUpdateRole(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectMeta, ru
 		}
 
 		if resultGet != nil {
-			err := CreateRole(typeMeta, objectMeta, rules)
-			if err != nil {
-				log.Printf("Error creating role: %v \n", err)
-				return err
-			}
-		} else {
 			err := UpdateRole(resultGet, rules)
 			if err != nil {
 				log.Printf("Error updating role: %v \n", err)
+				return err
+			}
+		} else {
+			err := CreateRole(typeMeta, objectMeta, rules)
+			if err != nil {
+				log.Printf("Error creating role: %v \n", err)
 				return err
 			}
 		}

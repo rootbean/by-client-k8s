@@ -141,15 +141,15 @@ func CreateOrUpdateRoleBinding(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectM
 		}
 
 		if resultGet != nil {
-			err := CreateRoleBinding(typeMeta, objectMeta, subject, roleRef)
-			if err != nil {
-				log.Printf("Error creating role binding: %v \n", err)
-				return err
-			}
-		} else {
 			err := UpdateRoleBinding(resultGet, subject)
 			if err != nil {
 				log.Printf("Error updating role binding: %v \n", err)
+				return err
+			}
+		} else {
+			err := CreateRoleBinding(typeMeta, objectMeta, subject, roleRef)
+			if err != nil {
+				log.Printf("Error creating role binding: %v \n", err)
 				return err
 			}
 		}

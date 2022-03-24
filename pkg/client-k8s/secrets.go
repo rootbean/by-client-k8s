@@ -159,15 +159,15 @@ func CreateOrUpdateSecret(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectMeta, 
 		}
 
 		if resultGet != nil {
-			err := CreateSecret(typeMeta, objectMeta, typeSecret, data)
-			if err != nil {
-				log.Printf("Error creating Secret: %v \n", err)
-				return err
-			}
-		} else {
 			err := UpdateSecret(resultGet, typeSecret, data)
 			if err != nil {
 				log.Printf("Error updating Secret: %v \n", err)
+				return err
+			}
+		} else {
+			err := CreateSecret(typeMeta, objectMeta, typeSecret, data)
+			if err != nil {
+				log.Printf("Error creating Secret: %v \n", err)
 				return err
 			}
 		}

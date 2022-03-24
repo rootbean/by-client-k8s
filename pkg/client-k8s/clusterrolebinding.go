@@ -141,15 +141,15 @@ func CreateOrUpdateClusterRoleBinding(typeMeta Metav1TypeMeta, objectMeta Metav1
 		}
 
 		if resultGet != nil {
-			err := CreateClusterRoleBinding(typeMeta, objectMeta, subject, roleRef)
-			if err != nil {
-				log.Printf("Error creating cluster role binding: %v \n", err)
-				return err
-			}
-		} else {
 			err := UpdateClusterRoleBinding(resultGet, subject)
 			if err != nil {
 				log.Printf("Error updating cluster role binding: %v \n", err)
+				return err
+			}
+		} else {
+			err := CreateClusterRoleBinding(typeMeta, objectMeta, subject, roleRef)
+			if err != nil {
+				log.Printf("Error creating cluster role binding: %v \n", err)
 				return err
 			}
 		}
