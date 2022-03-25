@@ -11,7 +11,7 @@ import (
 )
 
 // CreateSecret ...
-func CreateSecret(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectMeta, typeSecret SecretTypeStruct, data map[string][]byte) error {
+func CreateSecret(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectMeta, typeSecret SecretTypeStruct, data map[string][]byte, stringData map[string]string) error {
 
 	context := context.Background()
 
@@ -47,8 +47,9 @@ func CreateSecret(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectMeta, typeSecr
 			Labels:      objectMeta.Labels,
 			Annotations: objectMeta.Annotations,
 		},
-		Type: typeSecretSelected,
-		Data: data,
+		Type:       typeSecretSelected,
+		Data:       data,
+		StringData: stringData,
 	}
 
 	_, err = k8sClientSet.CoreV1().Secrets(objectMeta.Namespace).Create(context, &secret, metav1.CreateOptions{})
@@ -77,7 +78,7 @@ func GetSecret(name, namespace string) (*v1.Secret, error) {
 
 }
 
-func UpdateSecret(objSecret *v1.Secret, typeSecret SecretTypeStruct, data map[string][]byte) error {
+func UpdateSecret(objSecret *v1.Secret, typeSecret SecretTypeStruct, data map[string][]byte, stringData map[string]string) error {
 
 	context := context.Background()
 
@@ -104,6 +105,7 @@ func UpdateSecret(objSecret *v1.Secret, typeSecret SecretTypeStruct, data map[st
 
 	objSecret.Type = typeSecretSelected
 	objSecret.Data = data
+	objSecret.StringData = stringData
 
 	_, err := k8sClientSet.CoreV1().Secrets(objSecret.ObjectMeta.Namespace).Update(context, objSecret, metav1.UpdateOptions{})
 
@@ -150,7 +152,7 @@ func DeleteSecret(name, namespace string) error {
 
 }
 
-func CreateOrUpdateSecret(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectMeta, typeSecret SecretTypeStruct, data map[string][]byte) error {
+func CreateOrUpdateSecret(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectMeta, typeSecret SecretTypeStruct, data map[string][]byte, stringData map[string]string) error {
 	retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 		resultGet, getErr := GetSecret(objectMeta.Name, objectMeta.Namespace)
 		if getErr != nil {
@@ -159,13 +161,13 @@ func CreateOrUpdateSecret(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectMeta, 
 		}
 
 		if resultGet != nil {
-			err := UpdateSecret(resultGet, typeSecret, data)
+			err := UpdateSecret(resultGet, typeSecret, data, stringData)
 			if err != nil {
 				log.Printf("Error updating Secret: %v \n", err)
 				return err
 			}
 		} else {
-			err := CreateSecret(typeMeta, objectMeta, typeSecret, data)
+			err := CreateSecret(typeMeta, objectMeta, typeSecret, data, stringData)
 			if err != nil {
 				log.Printf("Error creating Secret: %v \n", err)
 				return err
