@@ -10,7 +10,7 @@ import (
 )
 
 // CreateServiceAccount
-func CreateServiceAccount(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectMeta, secretsArrStr []string) error {
+func CreateServiceAccount(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectMeta, secretsArrStr []string, imageSecret string) error {
 
 	context := context.Background()
 
@@ -33,6 +33,11 @@ func CreateServiceAccount(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectMeta, 
 			Namespace:   objectMeta.Namespace,
 			Labels:      objectMeta.Labels,
 			Annotations: objectMeta.Annotations,
+		},
+		ImagePullSecrets: []v1.LocalObjectReference{
+			v1.LocalObjectReference{
+				Name: imageSecret,
+			},
 		},
 		Secrets: secretReferences,
 	}
@@ -63,7 +68,7 @@ func GetServiceAccount(name, namespace string) (*v1.ServiceAccount, error) {
 
 }
 
-func UpdateServiceAccount(objServiceAccount *v1.ServiceAccount, secretsArrStr []string) error {
+func UpdateServiceAccount(objServiceAccount *v1.ServiceAccount, secretsArrStr []string, imageSecret string) error {
 
 	context := context.Background()
 
@@ -76,6 +81,11 @@ func UpdateServiceAccount(objServiceAccount *v1.ServiceAccount, secretsArrStr []
 		})
 	}
 
+	objServiceAccount.ImagePullSecrets = []v1.LocalObjectReference{
+		v1.LocalObjectReference{
+			Name: imageSecret,
+		},
+	}
 	objServiceAccount.Secrets = secretReferences
 
 	_, err := k8sClientSet.CoreV1().ServiceAccounts(objServiceAccount.ObjectMeta.Namespace).Update(context, objServiceAccount, metav1.UpdateOptions{})
@@ -123,7 +133,7 @@ func DeleteServiceAccount(name, namespace string) error {
 
 }
 
-func CreateOrUpdateServiceAccount(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectMeta, secretsArrStr []string) error {
+func CreateOrUpdateServiceAccount(typeMeta Metav1TypeMeta, objectMeta Metav1ObjectMeta, secretsArrStr []string, imageSecret string) error {
 	retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 		resultGet, getErr := GetServiceAccount(objectMeta.Name, objectMeta.Namespace)
 		if getErr != nil {
@@ -132,13 +142,13 @@ func CreateOrUpdateServiceAccount(typeMeta Metav1TypeMeta, objectMeta Metav1Obje
 		}
 
 		if resultGet != nil {
-			err := UpdateServiceAccount(resultGet, secretsArrStr)
+			err := UpdateServiceAccount(resultGet, secretsArrStr, imageSecret)
 			if err != nil {
 				log.Printf("Error updating ServiceAccount: %v \n", err)
 				return err
 			}
 		} else {
-			err := CreateServiceAccount(typeMeta, objectMeta, secretsArrStr)
+			err := CreateServiceAccount(typeMeta, objectMeta, secretsArrStr, imageSecret)
 			if err != nil {
 				log.Printf("Error creating ServiceAccount: %v \n", err)
 				return err
